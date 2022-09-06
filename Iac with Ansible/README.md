@@ -4,7 +4,9 @@ Ansible is a radically simple IT automation platform that makes your application
 
 ![img](../images/Screenshot%202022-09-05%20at%2015.27.52.png)
 
-## Run commands
+## Configuration Management
+
+### Run commands in Controller VM
 
 `sudo apt-get install software-properties-common`
 
@@ -38,6 +40,30 @@ Default directory : `cd /etc/ansible/`
 
 `sudo apt-get upgrade -y`
 
+### Update Hosts
+
+`sudo nano hosts`
+
+```
+[web]
+192.168.56.10 ansible_connection=ssh ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+
+[db]
+192.168.56.11 ansible_connection=ssh ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+
+```
+
+`ansible all -m ping`
+
+`ansible web -m ping`
+
+![img](../images/Screenshot%202022-09-06%20at%2009.21.16.png)
+
+### Create Playbook
+
+- `sudo nano playbook-name.yml`
+- Add the script
+
 ```
 # Create a playbook to install nginx web server inside web
 # --- three dashes at the start of the file of YML
@@ -63,3 +89,5 @@ Default directory : `cd /etc/ansible/`
 
 # The nginx server status is running
 ```
+
+- Run command: `ansible-playbook playbookname-playbook.yml`
