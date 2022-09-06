@@ -55,9 +55,22 @@ Default directory : `cd /etc/ansible/`
 
 `ansible all -m ping`
 
-`ansible web -m ping`
+`ansible web -m ping` `sudo ansible web -m ping`
 
 ![img](../images/Screenshot%202022-09-06%20at%2009.21.16.png)
+
+### Ad-Hocs commands
+
+- `ansible web -a "uname -a"`
+- `ansible all -a "uname -a"`
+- `ansible all -a "ls"`
+- `ansible web -a "pwd"`
+- `ansible web -a "free"`
+- `ansible web -a "date"`
+- `ansible all -a "date"`
+- `ansible all -a "systemctl status nginx"`
+- `ansible web -m shell -a "uptime"`
+- Command to copy a test file from etc/ansible to vagrant: `ansible web -m copy -a "src=/etc/ansible/test.txt dest=/home/vagrant"`
 
 ### Create Playbook
 
@@ -91,3 +104,66 @@ Default directory : `cd /etc/ansible/`
 ```
 
 - Run command: `ansible-playbook playbookname-playbook.yml`
+- To check the status: `sudo ansible web -a "systemctl status nginx"`
+
+## Connect to DB
+
+`ssh vagrant@192.168.56.11`
+
+`sudo apt-get update -y`
+
+`sudo apt-get upgrade -y`
+
+`exit`
+
+````
+# This playbook is to configure mongodb in our db server
+---
+# host name
+- hosts: db
+
+  gather_facts: yes
+
+# admin access
+  become: yes
+
+# Add set of instructions
+  tasks:
+  - name: set up Mongodb in db server
+    apt: pkg=mongodb state=present
+
+  - name: Remove mongodb file(delete file)
+    file:
+      path: /etc/mongodb.conf
+      state: absent
+
+  - name: Touch a file, using symbolic modes to set the permissions
+    file:
+      path: /etc/mongodb.conf
+      state: touch
+      mode: u=rw,g=r,o=r
+      #g for group o for any other user
+
+  - name: Insert multiple lines and Backup
+    blockinfile:
+      path: /etc/mongodb.conf
+      backup: yes
+      block: |
+        "storage:
+          dbPath: /var/lib/mongodb
+          journal:
+            enabled: true
+        systemLog:
+          destination: file
+          logAppend: true
+          path: /var/log/mongodb/mongod.log
+        net:
+          port: 27017
+          bindIp: 0.0.0.0"
+
+    ```
+````
+
+`ansible-playbook mongo-playbook.yml --syntax-check`
+
+`ansible-playbook mongo-playbook.yml`
