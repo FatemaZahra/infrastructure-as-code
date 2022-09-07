@@ -297,6 +297,8 @@ server {
 
 `exit`
 
+`sudo nano mongo-playbook.yml` in the controller
+
 ````
 # This playbook is to configure mongodb in our db server
 ---
@@ -345,11 +347,35 @@ server {
     ```
 ````
 
-`ansible-playbook mongo-playbook.yml --syntax-check`
+To check the syntax: `ansible-playbook mongo-playbook.yml --syntax-check`
 
 `ansible-playbook mongo-playbook.yml`
 
-## Playbook to create ec2 instance
+## Ansible vault
+
+`sudo mkdir group_vars`
+
+`cd group_vars/`
+
+`sudo mkdir all`
+
+`cd all`
+
+`sudo ansible-vault create pass.yml`
+
+To edit: `sudo ansible-vault edit pass.yml`
+
+`sudo chmod 600 pass.yml`
+
+Check permissions: `ll`
+
+`sudo apt install python3-pip`
+
+`pip3 install awscli`
+
+`pip3 install boto boto3`
+
+## Playbook to Create ec2 instance
 
 ````
 ---
@@ -434,4 +460,7 @@ server {
       tags: ['never', 'create_ec2']
 
       ```
+
 ````
+
+`sudo ansible-playbook ec2-playbook.yml --ask-vault-pass --tags create_ec2`
