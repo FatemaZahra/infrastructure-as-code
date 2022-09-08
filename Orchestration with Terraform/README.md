@@ -1,5 +1,7 @@
 # Terraform
 
+![](img/Screenshot%202022-09-08%20at%2013.50.26.png)
+
 ## Terraform and Benefits of Terraform
 
 Terraform is HashiCorp's open-source infrastructure as code tool. Orchestration addresses the needs to automate the lifecycle of environments. With infrastructure being codified, modifications of infrastructure are automated and Terraform is used to establish infrastructure across multi-cloud and on-prem data. It is also known for its use of a simple syntax, qualifying it as a prominent automation tool. Using Terraform has several advantages over manually managing your infrastructure:
