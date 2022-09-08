@@ -108,7 +108,7 @@ Default directory : `cd /etc/ansible/`
 
 # Install dependencies
 
-`sudo nano node-playbook.ym`
+`sudo nano node-playbook.yml`
 
 ```
 # Install node.js and npm
@@ -117,7 +117,7 @@ Default directory : `cd /etc/ansible/`
 
 # Add hosts or name of the host server
 
-- hosts: web
+- hosts: awsweb
 
 # Gather live information
   gather_facts: yes
@@ -127,6 +127,12 @@ Default directory : `cd /etc/ansible/`
 
 # Add instructions
   tasks:
+  - name: update + upgrade
+    become: yes
+    shell: |
+      sudo apt update
+      sudo apt upgrade -y
+
   - name: Install nodejs
     apt: pkg=nodejs state=present
 
@@ -201,6 +207,8 @@ server {
 ```
 
 ## Transfer app to vagrant
+
+Transfer files to location `/home/vagrant` or `/home/ubuntu` using `git clone` or `scp`, before transferring the files using the playbook to the web.
 
 ```
 ---
@@ -369,11 +377,17 @@ To edit: `sudo ansible-vault edit pass.yml`
 
 Check permissions: `ll`
 
+Move back to location `/etc/ansible`
+
 `sudo apt install python3-pip`
 
 `pip3 install awscli`
 
 `pip3 install boto boto3`
+
+`cd ~/.ssh`
+
+`ssh-keygen -t rsa -b 4096`
 
 ## Playbook to Create ec2 instance
 
