@@ -67,6 +67,8 @@ resource "aws_instance" "app_instance" {
   tags = {
       Name = "name_the_app"
     }
+# attach file.pem
+  key_name = "name_here"
 }
 
 ```
