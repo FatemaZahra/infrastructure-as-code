@@ -132,3 +132,33 @@ resource "aws_instance" "app_instance" {
   }
 
 }
+
+resource "aws_instance" "controller_instance" {
+
+# using which ami
+  ami = var.ami_id
+
+# instance type
+  instance_type = "t2.micro"
+
+# do we need it to have public ip
+  associate_public_ip_address = true
+
+# how to name your instance
+  tags = {
+      Name = var.controller_instance_name
+    }
+# attach file.pem
+  key_name = var.key_name
+
+# security group
+  vpc_security_group_ids = [var.sg_id]
+
+# subnet_id
+  subnet_id = var.aws_subnet_id
+
+  root_block_device {
+    volume_size = 8
+  }
+
+}
