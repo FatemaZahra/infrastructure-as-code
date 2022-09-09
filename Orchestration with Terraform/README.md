@@ -133,3 +133,40 @@ resource "aws_vpc" "main" {
   }
 }
 ```
+
+## Create internet gateway
+
+```t
+rresource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "main"
+  }
+}
+```
+
+## Create subnet
+
+```t
+resource "aws_subnet" "main" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+
+  tags = {
+    Name = "Main"
+  }
+}
+```
+
+## Create route table
+
+```t
+resource "aws_route_table" "example" {
+  vpc_id = aws_vpc.example.id
+
+  tags = {
+    Name = "example"
+  }
+}
+```
