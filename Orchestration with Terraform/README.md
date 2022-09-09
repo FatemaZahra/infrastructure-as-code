@@ -125,11 +125,11 @@ Global options (use these before the subcommand, if any):
 
 ```t
 resource "aws_vpc" "main" {
-  cidr_block       = "10.0.0.0/16"
+  cidr_block       = var.vpc_cidr_block
   instance_tenancy = "default"
 
   tags = {
-    Name = "name"
+    Name = var.aws_vpc_name
   }
 }
 ```
@@ -137,11 +137,11 @@ resource "aws_vpc" "main" {
 ## Create internet gateway
 
 ```t
-rresource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.main.id
+resource "aws_internet_gateway" "gw" {
+  vpc_id = var.aws_vpc_id
 
   tags = {
-    Name = "main"
+    Name = var.aws_ig_name
   }
 }
 ```
@@ -150,11 +150,11 @@ rresource "aws_internet_gateway" "gw" {
 
 ```t
 resource "aws_subnet" "main" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id     = var.aws_vpc_id
+  cidr_block = var.vpc_cidr_block_subnet
 
   tags = {
-    Name = "Main"
+    Name = var.aws_public_subnet_name
   }
 }
 ```
@@ -162,11 +162,73 @@ resource "aws_subnet" "main" {
 ## Create route table
 
 ```t
-resource "aws_route_table" "example" {
-  vpc_id = aws_vpc.example.id
+resource "aws_route_table" "pub_rt" {
+  vpc_id = var.aws_vpc_id
 
   tags = {
-    Name = "example"
+    Name = var.aws_route_table_name
+  }
+}
+```
+
+## Attach route tables
+
+```t
+resource "aws_route" "r" {
+  route_table_id         = var.aws_route_table_id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = var.aws_ig_id
+}
+
+resource "aws_route_table_association" "a" {
+  subnet_id      = var.aws_subnet_id
+  route_table_id = var.aws_route_table_id
+}
+```
+
+## Security Groups
+
+```t
+resource "aws_security_group" "app_group"  {
+  name = var.security_group_name
+  description = "fatema_app_sg_terraform"
+  vpc_id = var.aws_vpc_id
+
+# Inbound rules
+  ingress {
+    from_port       = "80"
+    to_port         = "80"
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+# ssh access
+  ingress {
+    from_port       = "22"
+    to_port         = "22"
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+# allow port 3000
+
+ingress {
+    from_port       = "3000"
+    to_port         = "3000"
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+# Outbound rules
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1" # allow all
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = var.security_group_name
   }
 }
 ```
